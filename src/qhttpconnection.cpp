@@ -69,6 +69,9 @@ QHttpConnection::~QHttpConnection()
 
     delete m_parserSettings;
     m_parserSettings = 0;
+	
+	delete m_request;
+	m_request = 0;
 }
 
 void QHttpConnection::socketDisconnected()
@@ -229,6 +232,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
 
     connect(theConnection, SIGNAL(destroyed()), response, SLOT(connectionClosed()));
     connect(response, SIGNAL(done()), theConnection, SLOT(responseDone()));
+	connect(theConnection, SIGNAL(destroyed()), theConnection->m_request, SLOT(deleteLater()));
 
     // we are good to go!
     Q_EMIT theConnection->newRequest(theConnection->m_request, response);
